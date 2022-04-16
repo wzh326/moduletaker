@@ -4,7 +4,6 @@
 import cv2
 import numpy as np
 import time
-
 from Lib.PaddleSeg_Inference_Lib import Paddle_Seg
 import rospy
 from std_msgs.msg import Header
@@ -20,7 +19,7 @@ precision_mode = "fp16"     # TensorRT精度模式
 # 模型文件路径
 model_folder_dir = "/home/itcast/py3_test_ws/src/py3_demo/scripts/model/hardnet_test"
 # 类别信息
-label_list = ["blind_road","sidewalk","other"]
+label_list = ["sidewalk","other","blind_road"]
 # -----------------------------------------------------------
         
 if __name__ == '__main__':
@@ -28,12 +27,13 @@ if __name__ == '__main__':
                             use_gpu=use_gpu, gpu_memory=gpu_memory, use_tensorrt=use_tensorrt, 
                             precision_mode=precision_mode,label_list=label_list)
     
-    paddle_seg.init(1920,1080)
+
     rospy.init_node('camera_node', anonymous=True) #定义节点
     image_pub=rospy.Publisher('/image_view/image_raw', Image, queue_size = 1) #定义话题
     while not rospy.is_shutdown():
         start = time.time()
-        image = cv2.imread("/home/itcast/py3_test_ws/src/py3_demo/scripts/61.jpg",1)
+        image = cv2.imread("/home/itcast/py3_test_ws/src/py3_demo/scripts/0.jpg",1)
+        paddle_seg.init(image.shape[1],image.shape[0])
         image = cv2.resize(image,(640,480))
         # 预测
         result = paddle_seg.infer(image)
